@@ -1,0 +1,17 @@
+{
+  "name": "visual-explainer-marketplace",
+  "owner": {
+    "name": "Emerging-Tech-Visma"
+  },
+  "metadata": {
+    "description": "Visual Explainer plugin for Claude Code — styled HTML pages for diagrams, reviews, and visual explanations"
+  },
+  "plugins": [
+    {
+      "name": "visual-explainer",
+      "source": "./",
+      "description": "Generate beautiful HTML pages for diagrams, diff reviews, plan reviews, and data tables",
+      "version": "0.9.0"
+    }
+  ]
+}

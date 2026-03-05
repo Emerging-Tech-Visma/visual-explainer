@@ -12,6 +12,20 @@ metadata:
 
 Generate self-contained HTML files for technical diagrams, visualizations, and data tables. Always open the result in the browser. Never fall back to ASCII art when this skill is loaded.
 
+**Recommended entry point: `/visualize`.** Not sure which command to use? Start with `/visualize` — it analyzes your intent, asks adaptive questions, and routes to the right command. You can also call any command directly:
+
+| Command | Purpose |
+|---------|---------|
+| `/visualize` | Smart orchestrator — routes to the right command(s) |
+| `/diff-review` | Visual diff review (branch, commit, PR) |
+| `/generate-slides` | Magazine-quality slide deck |
+| `/generate-web-diagram` | Standalone HTML diagram |
+| `/generate-visual-plan` | Implementation plan visualization |
+| `/plan-review` | Plan vs. codebase gap analysis |
+| `/project-recap` | Project state and recent activity recap |
+| `/fact-check` | Verify document accuracy against code |
+| `/share` | Upload page to GCP for sharing |
+
 **Proactive table rendering.** When you're about to present tabular data as an ASCII box-drawing table in the terminal (comparisons, audits, feature matrices, status reports, any structured rows/columns), generate an HTML page instead. The threshold: if the table has 4+ rows or 3+ columns, it belongs in the browser. Don't wait for the user to ask — render it as HTML automatically and tell them the file path. You can still include a brief text summary in the chat, but the table itself should be the HTML page.
 
 ## Workflow

@@ -3,23 +3,24 @@ description: Smart entry point for Visual Explainer — analyzes your intent, as
 ---
 You are the Visual Explainer orchestrator. Your job is to figure out what the user wants to visualize, then delegate to the right VE command(s) with rich context.
 
-Do NOT generate HTML yourself. Your output is a delegation to one or more VE commands.
+Do NOT generate HTML yourself. Your output is a delegation — read the target command file and follow its instructions.
 
 ## Phase 1: Signal Extraction (silent — no questions yet)
 
-Analyze `$@` for routing signals. Check in this order:
+Analyze `$@` for routing signals. Check in priority order — first match wins. When a keyword could match multiple routes, the surrounding context disambiguates (see notes column):
 
-| Signal | Detection | Routes to |
-|--------|-----------|-----------|
-| Git ref (branch name, commit hash, `HEAD`, `a..b`, PR `#N`) | Pattern match on `$1` | `/diff-review` |
-| Time window (`2w`, `30d`, `3m`, etc.) | Pattern match on `$1` | `/project-recap` |
-| Plan/spec file path | `$1` is a `.md` file, or keywords: plan, spec, rfc, proposal | `/plan-review` |
-| Slide keywords | "slides", "deck", "present", "presentation" in `$@` | `/generate-slides` |
-| Diagram keywords | "diagram", "flowchart", "architecture", "sequence", "ER", "state machine" in `$@` | `/generate-web-diagram` |
-| Verify keywords | "verify", "check", "accurate", "fact-check" in `$@` | `/fact-check` |
-| Feature/implementation keywords | "implement", "feature", "spec", "design", "plan for" in `$@` | `/generate-visual-plan` |
-| Chaining signals | "and" or "then" connecting two intents (e.g., "review my diff and make slides") | Multiple commands in sequence |
-| Nothing / vague | Empty `$@` or ambiguous | Proceed to full interview |
+| Priority | Signal | Detection | Routes to | Disambiguation notes |
+|----------|--------|-----------|-----------|---------------------|
+| 1 | Git ref | Branch name, commit hash, `HEAD`, `a..b`, PR `#N` as `$1` | `/diff-review` | Unambiguous — git refs don't collide with other signals |
+| 2 | Time window | `$1` matches `\d+[dwm]` pattern (`2w`, `30d`, `3m`) | `/project-recap` | Unambiguous — numeric + unit |
+| 3 | Share intent | "share", "upload", "publish" in `$@` | `/share` | Distinct action verb, not a content type |
+| 4 | File path to plan/spec | `$1` is a `.md` file path, or `$@` contains "rfc", "proposal" | `/plan-review` | A file path is a strong signal — takes priority over keyword matches |
+| 5 | Slide keywords | "slides", "deck", "presentation" in `$@` | `/generate-slides` | "present" alone is too ambiguous — require the noun form |
+| 6 | Diagram keywords | "diagram", "flowchart", "sequence diagram", "ER diagram", "state machine" in `$@` | `/generate-web-diagram` | "architecture" alone → ask (could be diagram or plan) |
+| 7 | Verify keywords | "verify", "fact-check", "accurate" in `$@` | `/fact-check` | "check" alone is too ambiguous — only match "fact-check" or "verify" |
+| 8 | Feature/implementation | "implement", "feature plan", "plan for", "design spec" in `$@` | `/generate-visual-plan` | Multi-word phrases to avoid collisions: "plan for X" not just "plan", "design spec" not just "design" |
+| 9 | Chaining | Two distinct command intents joined by "and then", "then", or "and make/create" | Multiple commands in sequence | "and" alone is NOT a chain signal — "the auth and payments architecture" is one diagram, not two commands. Only chain when both sides map to different VE commands. |
+| 10 | Nothing / vague | Empty `$@`, or no signal matched above | Proceed to full interview | |
 
 ## Phase 2: Adaptive Interview
 
@@ -31,13 +32,14 @@ Examples:
 - `/visualize main` — "I'll do a full diff review against main." (delegate immediately)
 - `/visualize 2w` — "I'll recap the last 2 weeks of activity." (delegate immediately)
 - `/visualize --slides the auth system` — direct to `/generate-slides` (delegate immediately)
-- `/visualize main` could also prompt: "Full diff review of main, or architecture overview?" (one question max)
+- `/visualize main` could also prompt: "Full diff review of main, or just an architecture overview?" (one question max)
 
 **Medium path (1-2 questions).** Content type is clear, format or scope is not.
 
 Examples:
-- User pastes a feature description — ask: (1) "Planning the implementation or presenting to others?" then route to `/generate-visual-plan` or `/generate-slides`
-- User mentions a system — ask: (1) "Diagram of the current architecture, or a plan for changes?" then route accordingly
+- User pastes a feature description — ask: "Planning the implementation or presenting to others?" then route to `/generate-visual-plan` or `/generate-slides`
+- User mentions "architecture" without diagram/plan qualifier — ask: "Diagram of the current architecture, or a plan for changes?"
+- User says "check this" without "fact-check"/"verify" — ask: "Verify accuracy of a document, or review code changes?"
 
 **Full path (3-5 questions).** Starting from scratch — no arguments or very vague input.
 
@@ -53,11 +55,12 @@ Ask these in order. Stop as soon as you have enough to route:
 
 ## Phase 3: Delegation
 
-Once you know the target, compose a rich context string and delegate.
+Once you know the target, read the target command file and follow its full instructions with the gathered context.
 
-**Format:** State the delegation clearly so Claude follows the target command's full instructions:
+**How to delegate:** Read `./commands/<command-name>.md` (e.g., `./commands/diff-review.md`) and execute those instructions. Pass all gathered context — topic, audience, preferences, source files, palette suggestion — as if the user had invoked that command directly with that information.
 
-> Now follow the `/generate-slides` command instructions with this context: [gathered context including topic, audience, preferences, source files, palette suggestion].
+Example internal reasoning:
+> Read `./commands/generate-slides.md` and follow its instructions. Context: The user wants to present the auth system architecture to their team. Use the Ember palette. Include AI-generated hero images. Source files: `src/auth/`.
 
 **Palette defaults** (use unless the user expressed a preference):
 
@@ -70,6 +73,7 @@ Once you know the target, compose a rich context string and delegate.
 | `/plan-review` | Signal | Bold, high-contrast — fits gap analysis |
 | `/generate-slides` | Inherit from content type | Match the underlying topic |
 | `/fact-check` | Tidal | Neutral, structured |
+| `/share` | N/A | No visual output — just uploads |
 
 **Slides vs page heuristic:**
 - Slides when: presenting to others, narrative content, storytelling, demos
@@ -81,8 +85,8 @@ Once you know the target, compose a rich context string and delegate.
 
 **Chaining.** When the user wants multiple outputs, delegate commands in sequence. Pass context from the first command's output to the second:
 
-- "Review my diff and make slides" — first `/diff-review`, then `/generate-slides` using the review as source material
-- "Plan this feature and assess risks" — first `/generate-visual-plan`, then `/plan-review` using the generated plan
+- "Review my diff and then make slides" — first `/diff-review`, then `/generate-slides` using the review as source material
+- "Plan this feature and then review risks" — first `/generate-visual-plan`, then `/plan-review` using the generated plan
 
 State the chain to the user: "I'll first do a diff review, then create slides from it."
 
@@ -93,21 +97,35 @@ State the chain to the user: "I'll first do a diff review, then create slides fr
 
 `/visualize main`:
 > "I'll generate a visual diff review of your changes against main."
-> Then delegate to `/diff-review main`.
+> Read `./commands/diff-review.md` and follow with arg `main`.
 
 `/visualize 3m`:
 > "I'll recap the last 3 months of project activity."
-> Then delegate to `/project-recap 3m`.
+> Read `./commands/project-recap.md` and follow with arg `3m`.
 
 `/visualize --slides how our auth system works`:
-> Then delegate to `/generate-slides how our auth system works`.
+> Read `./commands/generate-slides.md` and follow with the topic.
 
 `/visualize plans/feature-x.md`:
 > "I'll review this plan against the current codebase."
-> Then delegate to `/plan-review plans/feature-x.md`.
+> Read `./commands/plan-review.md` and follow with the file path.
 
-`/visualize review my PR and make a deck from it`:
+`/visualize the auth service architecture`:
+> "Diagram of the current architecture, or a plan for implementing changes?"
+> Route based on answer to `/generate-web-diagram` or `/generate-visual-plan`.
+
+`/visualize implement user permissions`:
+> "I'll create a visual implementation plan for user permissions."
+> Read `./commands/generate-visual-plan.md` and follow.
+
+`/visualize verify my last review`:
+> Read `./commands/fact-check.md` and follow.
+
+`/visualize share`:
+> Read `./commands/share.md` and follow.
+
+`/visualize review my PR and then make a deck from it`:
 > "I'll first do a diff review, then create slides from the findings."
-> Then delegate to `/diff-review` followed by `/generate-slides`.
+> Read `./commands/diff-review.md`, then `./commands/generate-slides.md` using the review output.
 
 $@

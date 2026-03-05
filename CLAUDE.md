@@ -21,7 +21,7 @@ scripts/              ← gemini-image.sh (AI image generation)
 
 ## Key Rules
 
-- Version lives in both `package.json` and `SKILL.md` metadata — keep in sync
+- Version lives in `package.json`, `SKILL.md` metadata, and `.claude-plugin/plugin.json` — keep all three in sync
 - `GEMINI_API_KEY` comes from user's `~/.zshrc`, not `.env` in repo
 - `.env` is gitignored — never commit API keys
 - See `.claude/rules/` for detailed guidelines

@@ -26,24 +26,11 @@ This skill fixes that. Real typography, dark/light themes, interactive Mermaid d
 
 ## Install
 
-**Pi:**
 ```bash
-pi install https://github.com/Emerging-Tech-Visma/visual-explainer
+claude /install https://github.com/Emerging-Tech-Visma/visual-explainer
 ```
 
-**Claude Code (plugin):**
-```bash
-claude /plugin install https://github.com/Emerging-Tech-Visma/visual-explainer
-```
-
-Note: Claude Code plugins namespace commands as `/visual-explainer:command-name`.
-
-**OpenAI Codex:**
-```bash
-git clone https://github.com/Emerging-Tech-Visma/visual-explainer.git ~/.agents/skills/visual-explainer
-mkdir -p ~/.agents/commands
-cp ~/.agents/skills/visual-explainer/commands/*.md ~/.agents/commands/
-```
+Commands are namespaced as `/visual-explainer:command-name`.
 
 ## Commands
 
@@ -58,8 +45,6 @@ cp ~/.agents/skills/visual-explainer/commands/*.md ~/.agents/commands/
 | `/fact-check` | Verify accuracy of a document against actual code |
 | `/share` | Share an HTML page via GCP Firebase CLI |
 
-The agent also kicks in automatically when it's about to dump a complex table in the terminal (4+ rows or 3+ columns) — it renders HTML instead.
-
 ## Slide Deck Mode
 
 Any command that produces a scrollable page supports `--slides` to generate a slide deck instead:
@@ -71,38 +56,19 @@ Any command that produces a scrollable page supports `--slides` to generate a sl
 
 ## How It Works
 
-```
-SKILL.md              ← workflow + design principles
-commands/             ← slash commands (works with pi and Claude Code)
-references/           ← agent reads before generating
-├── css-patterns.md   (layouts, animations, theming)
-├── libraries.md      (Mermaid, Chart.js, fonts)
-├── responsive-nav.md (sticky TOC for multi-section pages)
-└── slide-patterns.md (slide engine, transitions, presets)
-templates/            ← reference templates with different palettes
-├── architecture.html
-├── mermaid-flowchart.html
-├── data-table.html
-└── slide-deck.html
-    ↓
-~/.agent/diagrams/filename.html → opens in browser
-```
+When you run a command, Claude reads the skill's design references (CSS patterns, typography, Mermaid config) and generates a self-contained HTML file. The file opens directly in your browser — no build step, no server.
 
-The skill routes to the right approach automatically: Mermaid for flowcharts and diagrams, CSS Grid for architecture overviews, HTML tables for data, Chart.js for dashboards.
+The skill picks the right rendering approach automatically:
+- **Mermaid** — flowcharts, sequence diagrams, class diagrams, C4 architecture
+- **CSS Grid** — architecture overviews, card layouts, comparison panels
+- **HTML tables** — data-heavy content, risk matrices, requirement tracking
+- **Chart.js** — dashboards, KPI cards, metrics
 
-## Companion: playwright-cli
+Output goes to `~/.agent/diagrams/` and opens in your default browser.
 
-For browser automation workflows (testing generated pages, scraping data to visualize, form filling), install [playwright-cli](https://github.com/microsoft/playwright-cli) as a user-level Claude skill:
+### Auto-rendering
 
-```bash
-# Install playwright-cli globally
-npm install -g playwright-cli
-
-# Add the skill to your Claude user-level skills
-# Copy the skill folder to ~/.claude/skills/playwright-cli/
-```
-
-The visual-explainer skill generates HTML pages; playwright-cli lets your agent interact with them and other web pages programmatically.
+The skill also activates automatically when Claude is about to dump a complex table (4+ rows or 3+ columns) in the terminal — it renders HTML instead.
 
 ## Limitations
 

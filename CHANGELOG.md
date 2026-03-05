@@ -8,6 +8,11 @@
 - 7 art styles with prompt templates for AI image generation
 - Default aesthetic: Plus Jakarta Sans + JetBrains Mono, dark-first surfaces
 
+### Docs
+- README: Claude Code only install via `/plugin marketplace add` + `/plugin install`
+- README: replaced file tree with clear "How It Works" section
+- Condensed changelog for scannability
+
 ## [0.7.0] - 2026-03-05
 
 ### Gemini Image Generation

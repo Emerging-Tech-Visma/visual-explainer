@@ -75,6 +75,12 @@
     }
   }
 
+  /* ============ FOCUS ============ */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -588,7 +594,7 @@
 </head>
 <body>
 
-<div class="deck">
+<main class="deck">
 
   <!-- SLIDE 1: TITLE -->
   <section class="slide slide--title">
@@ -680,7 +686,7 @@
   <!-- SLIDE 6: DIAGRAM -->
   <section class="slide slide--diagram">
     <h2 class="slide__heading reveal">Request Flow</h2>
-    <div class="mermaid-wrap reveal">
+    <div class="mermaid-wrap reveal" role="img" aria-label="Request flow diagram showing client to edge worker routing through auth, rate limiter, and route resolver to API and static assets">
       <div class="zoom-controls">
         <button onclick="zoomDiagram(this,1.2)" title="Zoom in">+</button>
         <button onclick="zoomDiagram(this,0.8)" title="Zoom out">&minus;</button>
@@ -741,7 +747,7 @@ graph LR
     <div class="table-wrap reveal" style="flex:1; min-height:0; margin-top:clamp(8px,1.5vh,20px);">
       <div class="table-scroll">
         <table class="data-table">
-          <thead><tr><th>Phase</th><th>Scope</th><th>Timeline</th><th>Risk</th></tr></thead>
+          <thead><tr><th scope="col">Phase</th><th scope="col">Scope</th><th scope="col">Timeline</th><th scope="col">Risk</th></tr></thead>
           <tbody>
             <tr><td>1. Shadow mode</td><td>Mirror traffic to edge, compare responses</td><td>Week 1&ndash;2</td><td style="color:var(--green);">Low</td></tr>
             <tr><td>2. Canary rollout</td><td>5% traffic to edge, monitor errors</td><td>Week 3</td><td style="color:var(--green);">Low</td></tr>
@@ -793,7 +799,7 @@ graph LR
     </div>
   </section>
 
-</div><!-- /deck -->
+</main><!-- /deck -->
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';

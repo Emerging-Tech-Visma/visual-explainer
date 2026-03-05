@@ -50,6 +50,17 @@ Always define both light and dark palettes via custom properties. Start with whi
 }
 ```
 
+### Focus Visible
+
+Add to every page for keyboard navigation accessibility. Place after the theme variables block.
+
+```css
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+```
+
 ## Background Atmosphere
 
 Flat backgrounds feel dead. Use subtle gradients or patterns.

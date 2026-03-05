@@ -70,6 +70,12 @@
     }
   }
 
+  /* ============ FOCUS ============ */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   /* ============ RESET + BASE ============ */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -401,7 +407,7 @@
 </head>
 <body>
 
-<div class="container">
+<main class="container">
 
   <h1 class="animate" style="--i:0">Requirements Audit</h1>
   <p class="subtitle animate" style="--i:1">victoria's email vs. implementation plan &mdash; point-by-point review</p>
@@ -436,9 +442,9 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th class="wide">Request</th>
-            <th class="wide">Plan</th>
-            <th>Status</th>
+            <th scope="col" class="wide">Request</th>
+            <th scope="col" class="wide">Plan</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -534,7 +540,7 @@
     </div>
   </details>
 
-</div>
+</main>
 
 </body>
 </html>

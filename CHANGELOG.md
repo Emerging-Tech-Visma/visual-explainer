@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.0] - 2026-03-05
+
+### Design Palette Integration
+- Added `references/design-palette.md` -- complete design system (brand colors, content palettes, typography, spacing, art styles, prompt templates)
+- Design palette is now the default aesthetic in SKILL.md (Tidal palette, Plus Jakarta Sans + JetBrains Mono, dark-first surfaces)
+- 5 content palettes: Tidal, Ember, Canopy, Aurora, Signal -- each with accent colors and character
+- 7 art styles with ready-to-use prompt templates for AI image generation
+- 8 graphic presets for slides and inline images
+- Updated font pairings, accent palettes, and prompt craft sections to reference the design system
+
+## [0.7.0] - 2026-03-05
+
+### Gemini 3.1 Flash Direct API Support
+- New `scripts/gemini-image.sh` for direct Gemini API image generation without surf-cli
+- Three-tier image detection: surf-cli -> `$GEMINI_API_KEY` -> skip gracefully
+- Uses Gemini 3.1 Flash Image Preview (cost-effective, strong text rendering, multiple aspect ratios)
+- Only requires `curl` + `python3` (no additional dependencies)
+- All 6 command files updated to reference centralized detection logic in SKILL.md
+- Updated `references/slide-patterns.md` and `references/css-patterns.md` for new fallback chain
+- Added `.env` to `.gitignore` to prevent accidental API key commits
+- Zero breaking changes: surf-cli users see no difference
+
 ## [0.5.0] - 2026-03-04
 
 ### Class Diagram and C4 Architecture Support

@@ -467,7 +467,7 @@ Each type has a defined HTML structure and CSS layout. The agent can adapt color
 
 ### Title Slide
 
-Full-viewport hero. Background treatment via gradient, texture, or surf-generated image. 80–120px display type.
+Full-viewport hero. Background treatment via gradient, texture, or AI-generated image. 80-120px display type.
 
 ```html
 <section class="slide slide--title">
@@ -1000,7 +1000,7 @@ KPI cards at presentation scale (48–64px hero numbers). Mini-charts via Chart.
 
 ### Full-Bleed Slide
 
-Background image (surf-generated or CSS gradient) dominates the viewport. Text overlay with gradient scrim ensuring contrast. Zero slide padding.
+Background image (AI-generated or CSS gradient) dominates the viewport. Text overlay with gradient scrim ensuring contrast. Zero slide padding.
 
 ```html
 <section class="slide slide--bleed">
@@ -1120,20 +1120,21 @@ Vary gradient direction and accent glow position across slides to create visual 
 
 Slides should reach for visuals before defaulting to text alone. If a slide could be more compelling with an image, chart, or diagram, add one.
 
-**surf-cli integration:** Check `which surf` at the start of every slide deck generation. If available, **generate 2–4 images minimum** for any deck over 10 slides. This is not optional when surf is available — a deck with AI-generated imagery is dramatically more compelling than one with only CSS gradients. Target these slides in priority order:
+**Image generation integration:** Check for image generation at the start of every slide deck generation using the three-tier detection (see SKILL.md): surf-cli first, then `$GEMINI_API_KEY`, then skip gracefully. If available, **generate 2-4 images minimum** for any deck over 10 slides. This is not optional when image generation is available -- a deck with AI-generated imagery is dramatically more compelling than one with only CSS gradients. Target these slides in priority order:
 
 1. **Title slide** (always): background image that sets the deck's visual tone. Match the topic and palette. Use `--aspect-ratio 16:9`. Prompt example: "abstract dark geometric pattern with green accent lines, technical and minimal" for Terminal Mono preset.
-2. **Full-bleed slide** (always if deck has one): immersive background for the deck's visual anchor moment. Style should match the preset — photo-realistic for Midnight Editorial, abstract/geometric for Swiss Clean, circuit-board or terminal aesthetic for Terminal Mono.
-3. **Content slides with conceptual topics** (1–2 if the deck has room): illustration in the `.slide__aside` area for slides about abstract concepts. Use `--aspect-ratio 1:1`.
+2. **Full-bleed slide** (always if deck has one): immersive background for the deck's visual anchor moment. Style should match the preset -- photo-realistic for Midnight Editorial, abstract/geometric for Swiss Clean, circuit-board or terminal aesthetic for Terminal Mono.
+3. **Content slides with conceptual topics** (1-2 if the deck has room): illustration in the `.slide__aside` area for slides about abstract concepts. Use `--aspect-ratio 1:1`.
 
 **Generate images before writing HTML** so they're ready to embed. The workflow:
 
 ```bash
-# Check availability
-which surf
+# Tier 1: surf-cli
+which surf && surf gemini "descriptive prompt matching deck palette" --generate-image /tmp/ve-slide-title.png --aspect-ratio 16:9
 
-# Generate (one per target slide)
-surf gemini "descriptive prompt matching deck palette" --generate-image /tmp/ve-slide-title.png --aspect-ratio 16:9
+# Tier 2: direct Gemini API
+# (if surf unavailable but $GEMINI_API_KEY is set)
+bash ./scripts/gemini-image.sh --prompt "descriptive prompt matching deck palette" --output /tmp/ve-slide-title.png --aspect-ratio 16:9
 
 # Base64 encode for self-containment (macOS)
 TITLE_IMG=$(base64 -i /tmp/ve-slide-title.png)
@@ -1146,16 +1147,16 @@ TITLE_IMG=$(base64 -i /tmp/ve-slide-title.png)
 rm /tmp/ve-slide-title.png
 ```
 
-**Prompt craft for slides:** Be specific about style, dominant colors, and mood. Pull colors from the preset's CSS variables. Examples:
+**Prompt craft for slides:** Be specific about style, dominant colors, and mood. Pull colors from the preset's CSS variables. Gemini 3.1 Flash has strong text rendering -- you can include labels and annotations directly in prompts. Examples:
 - Terminal Mono: "dark abstract circuit board pattern, green (#50fa7b) traces on near-black (#0a0e14), minimal, technical"
 - Midnight Editorial: "deep navy abstract composition, warm gold accent light, cinematic depth of field, premium editorial feel"
 - Warm Signal: "warm cream textured paper with terracotta geometric accents, confident modern design"
 
-**When surf fails or isn't available:** Degrade gracefully to CSS gradients and SVG decorations. Use the `.slide__bg--gradient` pattern with bold `linear-gradient` or `radial-gradient` backgrounds. The deck should stand on its own visually without generated images — they enhance, they don't carry. Note the fallback in an HTML comment (`<!-- surf unavailable, using CSS gradient fallback -->`) so future edits know to retry.
+**When image generation fails or isn't available:** Degrade gracefully to CSS gradients and SVG decorations. Use the `.slide__bg--gradient` pattern with bold `linear-gradient` or `radial-gradient` backgrounds. The deck should stand on its own visually without generated images -- they enhance, they don't carry. Note the fallback in an HTML comment (`<!-- image generation unavailable, using CSS gradient fallback -->`) so future edits know to retry.
 
 **Inline data visualizations:** Proactively add SVG sparklines next to numbers, mini-charts on dashboard slides, and small Mermaid diagrams on split slides even when not explicitly requested. A number with a sparkline next to it tells a better story than a number alone.
 
-**When to skip images:** If surf isn't available, degrade gracefully — use CSS gradients and SVG decorations instead. Never error on missing surf. Pure structural or data-heavy decks (code reviews, table comparisons) may not need generated images.
+**When to skip images:** If neither surf-cli nor `$GEMINI_API_KEY` is available, degrade gracefully -- use CSS gradients and SVG decorations instead. Never error on missing image generation. Pure structural or data-heavy decks (code reviews, table comparisons) may not need generated images.
 
 ## Compositional Variety
 

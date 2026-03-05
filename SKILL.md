@@ -2,10 +2,10 @@
 name: visual-explainer
 description: "Generate beautiful, self-contained HTML pages that visually explain systems, code changes, plans, and data. Use when the user asks for a diagram, architecture overview, diff review, plan review, project recap, comparison table, flowchart, sequence diagram, or any visual explanation of technical concepts. Trigger on phrases like 'explain this visually', 'make a diagram', 'show me how X works', 'visualize this', 'draw the architecture', or 'create a visual overview'. Also use proactively when you are about to render a complex ASCII table (4+ rows or 3+ columns) — present it as a styled HTML page instead. When in doubt about whether something deserves visual treatment, it does."
 license: MIT
-compatibility: Requires a browser to view generated HTML files. Optional surf-cli for AI image generation.
+compatibility: Requires a browser to view generated HTML files. Optional surf-cli or GEMINI_API_KEY for AI image generation.
 metadata:
   author: Emerging-Tech-Visma
-  version: "0.6.0"
+  version: "0.8.0"
 ---
 
 # Visual Explainer
@@ -30,9 +30,16 @@ For prose accents, see "Prose Page Elements" in `./references/css-patterns.md`. 
 
 **What type of content?** Architecture, flowchart, sequence, data flow, schema/ER, state machine, mind map, class diagram, C4 architecture, data table, timeline, dashboard, or prose-first page. Each has distinct layout needs and rendering approaches (see Diagram Types below).
 
-**What aesthetic?** Pick one and commit. The constrained aesthetics (Blueprint, Editorial, Paper/ink) are safer — they have specific requirements that prevent generic output. The flexible ones (IDE-inspired) require more discipline.
+**What aesthetic?** Pick one and commit. **The design palette is the default** — use it unless the content clearly calls for something else. The constrained aesthetics are safer alternatives. The flexible ones require more discipline.
 
-**Constrained aesthetics (prefer these):**
+**Design palette (default):** Use the design system from `./references/design-palette.md`. Read it before generating. Key points:
+- Dark-first: background `#0A1628`, surfaces `#111827`/`#1F2937`
+- Font pairing: Plus Jakarta Sans (body) + JetBrains Mono (code)
+- Pick a content palette: Tidal (teal, default), Ember (orange/coral), Canopy (lime/teal), Aurora (turquoise/orange), Signal (coral/lime)
+- 7 art styles for AI images: expressive, editorial, framework, narrative, technical, flowchart, dark-tech — each has prompt templates in the palette reference
+- Spacing, radius, and transition tokens are defined — use them
+
+**Constrained aesthetics (alternatives):**
 - Blueprint (technical drawing feel, subtle grid background, deep slate/blue palette, monospace labels, precise borders) — see `websocket-implementation-plan.html` for reference
 - Editorial (serif headlines like Instrument Serif or Crimson Pro, generous whitespace, muted earth tones or deep navy + gold)
 - Paper/ink (warm cream `#faf7f5` background, terracotta/sage accents, informal feel)
@@ -52,6 +59,7 @@ Vary the choice each time. If the last diagram was dark and technical, make the 
 ### 2. Structure
 
 **Read the reference material** before generating. Don't memorize it — read it each time to absorb the patterns.
+- For the design system (colors, typography, spacing, art styles, prompt templates): read `./references/design-palette.md`
 - For text-heavy architecture overviews (card content matters more than topology): read `./templates/architecture.html`
 - For flowcharts, sequence diagrams, ER, state machines, mind maps, class diagrams, C4: read `./templates/mermaid-flowchart.html`
 - For data tables, comparisons, audits, feature matrices: read `./templates/data-table.html`
@@ -92,13 +100,20 @@ Vary the choice each time. If the last diagram was dark and technical, make the 
 
 **Mermaid CSS class collision constraint:** Never define `.node` as a page-level CSS class. Mermaid.js uses `.node` internally on SVG `<g>` elements with `transform: translate(x, y)` for positioning. Page-level `.node` styles (hover transforms, box-shadows) leak into diagrams and break layout. Use the namespaced `.ve-card` class for card components instead. The only safe way to style Mermaid's `.node` is scoped under `.mermaid` (e.g., `.mermaid .node rect`).
 
-**AI-generated illustrations (optional).** If [surf-cli](https://github.com/nicobailon/surf-cli) is available, you can generate images via Gemini and embed them in the page for creative, illustrative, explanatory, educational, or decorative purposes. Check availability with `which surf`. If available:
+**AI-generated illustrations (optional).** Three-tier detection for image generation — use the first available:
+
+1. **surf-cli** (`which surf`): Use `surf gemini --generate-image` (existing workflow)
+2. **Direct Gemini API** (`$GEMINI_API_KEY` set): Use `bash ./scripts/gemini-image.sh` (no extra dependencies)
+3. **Neither available**: Skip images gracefully — the page stands on its own
 
 ```bash
-# Generate to a temp file (use --aspect-ratio for control)
+# Tier 1: surf-cli
 surf gemini "descriptive prompt" --generate-image /tmp/ve-img.png --aspect-ratio 16:9
 
-# Base64 encode for self-containment (macOS)
+# Tier 2: direct Gemini API (Gemini 3.1 Flash — good text rendering, $0.07/image)
+bash ./scripts/gemini-image.sh --prompt "descriptive prompt" --output /tmp/ve-img.png --aspect-ratio 16:9
+
+# Both produce a PNG. Base64 encode for self-containment (macOS):
 IMG=$(base64 -i /tmp/ve-img.png)
 # Linux: IMG=$(base64 -w 0 /tmp/ve-img.png)
 
@@ -111,9 +126,9 @@ See `./references/css-patterns.md` for image container styles (hero banners, inl
 
 **When to use:** Hero banners that establish the page's visual tone. Conceptual illustrations for abstract systems that Mermaid can't express (physical infrastructure, user journeys, mental models). Educational diagrams that benefit from artistic or photorealistic rendering. Decorative accents that reinforce the aesthetic.
 
-**When to skip:** Anything Mermaid or CSS handles well. Generic decoration that doesn't convey meaning. Data-heavy pages where images would distract. Always degrade gracefully — if surf isn't available, skip images without erroring. The page should stand on its own with CSS and typography alone.
+**When to skip:** Anything Mermaid or CSS handles well. Generic decoration that doesn't convey meaning. Data-heavy pages where images would distract. Always degrade gracefully — if neither surf nor `$GEMINI_API_KEY` is available, skip images without erroring. The page should stand on its own with CSS and typography alone.
 
-**Prompt craft:** Match the image to the page's palette and aesthetic direction. Specify the style (3D render, technical illustration, watercolor, isometric, flat vector, etc.) and mention dominant colors from your CSS variables. Use `--aspect-ratio 16:9` for hero banners, `--aspect-ratio 1:1` for inline illustrations. Keep prompts specific — "isometric illustration of a message queue with cyan nodes on dark navy background" beats "a diagram of a queue."
+**Prompt craft:** When using the design palette, use the art style prompt templates from `./references/design-palette.md` — they specify the dark surface (`#111827`), accent colors, and composition rules. Pick from: expressive, editorial, framework, narrative, technical, flowchart, dark-tech. Replace `{subject}`, `{accent1}`, `{accent2}` with actual values from your chosen content palette. For other aesthetics, match the image to the page's palette and specify the style explicitly. Use `--aspect-ratio 16:9` for hero banners, `--aspect-ratio 1:1` for inline illustrations. Keep prompts specific. Gemini 3.1 Flash has strong text rendering — you can include labels, annotations, and captions directly in the prompt.
 
 ### 3. Style
 
@@ -124,11 +139,11 @@ Apply these principles to every diagram:
 **Forbidden as `--font-body`:** Inter, Roboto, Arial, Helvetica, system-ui alone. These are AI slop signals.
 
 **Good pairings (use these):**
+- Plus Jakarta Sans + JetBrains Mono (default -- rounded, approachable)
 - DM Sans + Fira Code (technical, precise)
 - Instrument Serif + JetBrains Mono (editorial, refined)
 - IBM Plex Sans + IBM Plex Mono (reliable, readable)
 - Bricolage Grotesque + Fragment Mono (bold, characterful)
-- Plus Jakarta Sans + Azeret Mono (rounded, approachable)
 
 Load via `<link>` in `<head>`. Include a system font fallback in the `font-family` stack for offline resilience.
 
@@ -137,11 +152,14 @@ Load via `<link>` in `<head>`. Include a system font fallback in the `font-famil
 **Forbidden accent colors:** `#8b5cf6` `#7c3aed` `#a78bfa` (indigo/violet), `#d946ef` (fuchsia), the cyan-magenta-pink combination. These are Tailwind defaults that signal zero design intent.
 
 **Good accent palettes (use these):**
-- Terracotta + sage (`#c2410c`, `#65a30d`) — warm, earthy
-- Teal + slate (`#0891b2`, `#0369a1`) — technical, precise
-- Rose + cranberry (`#be123c`, `#881337`) — editorial, refined
-- Amber + emerald (`#d97706`, `#059669`) — data-focused
+- Tidal: `#0E7F88` + `#009F93` (teal/turquoise -- default, structured)
+- Ember: `#F97C00` + `#EF564B` (orange/coral -- warm, narrative)
+- Canopy: `#8CB501` + `#0E7F88` (lime/teal -- fresh, growth)
+- Aurora: `#009F93` + `#F97C00` (turquoise/orange -- dynamic)
+- Signal: `#EF564B` + `#8CB501` (coral/lime -- bold, high-contrast)
 - Deep blue + gold (`#1e3a5f`, `#d4a73a`) — premium, sophisticated
+- Terracotta + sage (`#c2410c`, `#65a30d`) — warm, earthy
+- Rose + cranberry (`#be123c`, `#881337`) — editorial, refined
 
 Put your primary aesthetic in `:root` and the alternate in the media query:
 
@@ -310,7 +328,7 @@ An alternative output format for presenting content as a magazine-quality slide 
 
 **Slide types (10):** Title, Section Divider, Content, Split, Diagram, Dashboard, Table, Code, Quote, Full-Bleed. Each has a defined layout in `slide-patterns.md`. Content that exceeds a slide's density limit splits across multiple slides — never scrolls within a slide.
 
-**Visual richness:** Check `which surf` at the start. If surf-cli is available, generate 2–4 images (title slide background, full-bleed background, optional content illustrations) before writing HTML — see the Proactive Imagery section in `slide-patterns.md` for the workflow. Also use SVG decorative accents, per-slide background gradients, inline sparklines, and small Mermaid diagrams. Visual-first, text-second.
+**Visual richness:** Check for image generation at the start (surf-cli, then `$GEMINI_API_KEY`). If available, generate 2-4 images (title slide background, full-bleed background, optional content illustrations) before writing HTML -- see the Proactive Imagery section in `slide-patterns.md` for the workflow. Also use SVG decorative accents, per-slide background gradients, inline sparklines, and small Mermaid diagrams. Visual-first, text-second.
 
 **Compositional variety:** Consecutive slides must vary spatial approach — centered, left-heavy, right-heavy, split, edge-aligned, full-bleed. Three centered slides in a row means push one off-axis.
 

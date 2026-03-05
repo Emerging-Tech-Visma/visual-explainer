@@ -69,6 +69,12 @@
     }
   }
 
+  /* ============ FOCUS ============ */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
   /* ============ RESET + BASE ============ */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -281,7 +287,7 @@
 </head>
 <body>
 
-<div class="container">
+<main class="container">
 
   <h1 class="animate" style="--i:0">CI/CD Pipeline</h1>
   <p class="subtitle animate" style="--i:1">github actions &rarr; staging &rarr; production</p>
@@ -292,7 +298,7 @@
     manual approval via a GitHub environment gate.
   </p>
 
-  <div class="mermaid-wrap animate" style="--i:3">
+  <div class="mermaid-wrap animate" role="img" aria-label="CI/CD pipeline flowchart showing branch routing, parallel testing, Docker build, staging deploy, and production release" style="--i:3">
     <div class="zoom-controls">
       <button onclick="zoomDiagram(this, 1.2)" title="Zoom in">+</button>
       <button onclick="zoomDiagram(this, 0.8)" title="Zoom out">&minus;</button>
@@ -334,7 +340,7 @@
     Without it, Mermaid silently falls back to dagre.
   </div>
 
-</div>
+</main>
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';

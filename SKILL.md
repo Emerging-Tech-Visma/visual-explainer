@@ -66,6 +66,8 @@ Vary the choice each time. If the last diagram was dark and technical, make the 
 - For slide deck presentations (when `--slides` flag is present or `/generate-slides` is invoked): read `./templates/slide-deck.html` and `./references/slide-patterns.md`
 - For prose-heavy publishable pages (READMEs, articles, blog posts, essays): read the "Prose Page Elements" section in `./references/css-patterns.md` and "Typography by Content Voice" in `./references/libraries.md`
 
+**For all pages**: read `./references/html-quality.md` (accessibility, touch targets, contrast, semantic HTML).
+
 **For CSS/layout patterns and SVG connectors**, read `./references/css-patterns.md`.
 
 **For pages with 4+ sections** (reviews, recaps, dashboards), also read `./references/responsive-nav.md` for section navigation with sticky sidebar TOC on desktop and horizontal scrollable bar on mobile.
@@ -375,6 +377,9 @@ Before delivering, verify:
 - **Information completeness**: Does the diagram actually convey what the user asked for? Pretty but incomplete is a failure.
 - **No overflow**: Resize the browser to different widths. No content should clip or escape its container. Every grid and flex child needs `min-width: 0`. Side-by-side panels need `overflow-wrap: break-word`. Never use `display: flex` on `<li>` for marker characters — it creates anonymous flex items that can't shrink, causing lines with many inline `<code>` badges to overflow. Use absolute positioning for markers instead. See the Overflow Protection section in `./references/css-patterns.md`.
 - **Mermaid zoom controls**: Every `.mermaid-wrap` container must have zoom controls (+/−/reset/expand buttons), Ctrl/Cmd+scroll zoom, click-and-drag panning, and click-to-expand (clicking without dragging opens the diagram full-size in a new tab). The expand button (⛶) provides the same functionality. See `./references/css-patterns.md` for the full pattern including the `openMermaidInNewTab()` function.
+- **Accessibility**: Heading hierarchy (h1 > h2 > h3, no skips). All images have alt text. Interactive elements have visible `:focus-visible` styles. Mermaid containers have `role="img"` and `aria-label`.
+- **Touch targets**: All clickable elements (zoom buttons, nav links, theme toggle) are at least 44x44px with 8px spacing.
+- **Contrast**: Text meets 4.5:1 against background in both themes. Status indicators include text/icon alongside color.
 - **File opens cleanly**: No console errors, no broken font loads, no layout shifts.
 
 ## The Slop Test

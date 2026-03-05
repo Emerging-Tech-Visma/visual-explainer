@@ -42,6 +42,16 @@ Then install the plugin:
 
 Commands are namespaced as `/visual-explainer:command-name`.
 
+### Optional: AI Image Generation
+
+Some commands can generate images via Gemini. Add your API key to `~/.zshrc`:
+
+```bash
+export GEMINI_API_KEY="your_key_here"
+```
+
+Without it, pages render fine using CSS and typography — images are skipped gracefully.
+
 ## Commands
 
 | Command | What it does |

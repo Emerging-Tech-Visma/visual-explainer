@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.0] - 2026-03-05
+
+### HTML Quality Rules
+- New `references/html-quality.md` with accessibility, touch target, contrast, and semantic HTML rules
+- `:focus-visible` styles on all interactive elements across all templates
+- `<main>` wrappers, `scope="col"` on table headers, `role="img"` + `aria-label` on Mermaid containers
+- Quality checks in SKILL.md: accessibility, touch targets (44x44px min), contrast (4.5:1)
+- `:focus-visible` CSS snippet added to `css-patterns.md` Theme Setup section
+
 ## [0.8.0] - 2026-03-05
 
 ### Design Palette

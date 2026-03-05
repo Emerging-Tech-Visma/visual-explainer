@@ -1,11 +1,11 @@
 ---
 name: visual-explainer
-description: Generate beautiful, self-contained HTML pages that visually explain systems, code changes, plans, and data. Use when the user asks for a diagram, architecture overview, diff review, plan review, project recap, comparison table, or any visual explanation of technical concepts. Also use proactively when you are about to render a complex ASCII table (4+ rows or 3+ columns) — present it as a styled HTML page instead.
+description: "Generate beautiful, self-contained HTML pages that visually explain systems, code changes, plans, and data. Use when the user asks for a diagram, architecture overview, diff review, plan review, project recap, comparison table, flowchart, sequence diagram, or any visual explanation of technical concepts. Trigger on phrases like 'explain this visually', 'make a diagram', 'show me how X works', 'visualize this', 'draw the architecture', or 'create a visual overview'. Also use proactively when you are about to render a complex ASCII table (4+ rows or 3+ columns) — present it as a styled HTML page instead. When in doubt about whether something deserves visual treatment, it does."
 license: MIT
 compatibility: Requires a browser to view generated HTML files. Optional surf-cli for AI image generation.
 metadata:
-  author: nicobailon
-  version: "0.5.0"
+  author: Emerging-Tech-Visma
+  version: "0.6.0"
 ---
 
 # Visual Explainer
@@ -344,35 +344,7 @@ Every diagram is a single self-contained `.html` file. No external assets except
 
 ## Sharing Pages
 
-Share visual explainer pages instantly via Vercel. No account or authentication required.
-
-**Usage:**
-```bash
-bash {{skill_dir}}/scripts/share.sh <html-file>
-```
-
-**Example:**
-```bash
-bash {{skill_dir}}/scripts/share.sh ~/.agent/diagrams/my-diagram.html
-
-# Output:
-# ✓ Shared successfully!
-# Live URL:  https://skill-deploy-abc123.vercel.app
-# Claim URL: https://vercel.com/claim-deployment?code=...
-```
-
-**How it works:**
-1. Copies HTML file to temp directory as `index.html`
-2. Deploys via the vercel-deploy skill (zero-auth claimable deployment)
-3. URL is live immediately — works in any browser
-
-**Requirements:**
-- vercel-deploy skill (should be pre-installed; if not: `pi install npm:vercel-deploy`)
-
-**Notes:**
-- Deployments are public — anyone with the URL can view
-- Preview deployments have configurable retention (default: 30 days)
-- Claim URL lets you transfer the deployment to your Vercel account
+Share visual explainer pages by uploading to GCP using the Firebase/Firestore CLI.
 
 See `./commands/share.md` for the `/share` command template.
 
@@ -387,71 +359,16 @@ Before delivering, verify:
 - **Mermaid zoom controls**: Every `.mermaid-wrap` container must have zoom controls (+/−/reset/expand buttons), Ctrl/Cmd+scroll zoom, click-and-drag panning, and click-to-expand (clicking without dragging opens the diagram full-size in a new tab). The expand button (⛶) provides the same functionality. See `./references/css-patterns.md` for the full pattern including the `openMermaidInNewTab()` function.
 - **File opens cleanly**: No console errors, no broken font loads, no layout shifts.
 
-## Anti-Patterns (AI Slop)
+## The Slop Test
 
-These patterns are explicitly forbidden. They signal "AI-generated template" and undermine the skill's purpose of producing distinctive, high-quality diagrams. Review every generated page against this list.
+Before delivering, apply this final check: **Would a developer looking at this page immediately think "AI generated this"?** The telltale signs (if 2+ are present, regenerate):
 
-### Typography
-
-**Forbidden fonts as primary `--font-body`:**
-- Inter — the single most overused AI default
-- Roboto, Arial, Helvetica — generic system fallbacks promoted to primary
-- system-ui, sans-serif alone — no character, no intent
-
-**Required:** Pick from the font pairings in `./references/libraries.md`. Every generation should use a different pairing from the last.
-
-### Color Palette
-
-**Forbidden accent colors:**
-- Indigo-500/violet-500 (`#8b5cf6`, `#7c3aed`, `#a78bfa`) — Tailwind's default purple range
-- The cyan + magenta + pink neon gradient combination (`#06b6d4` → `#d946ef` → `#f472b6`)
-- Any palette that could be described as "Tailwind defaults with purple/pink/cyan accents"
-
-**Forbidden color effects:**
-- Gradient text on headings (`background: linear-gradient(...); background-clip: text;`) — this screams AI-generated
-- Animated glowing box-shadows on cards (`box-shadow: 0 0 20px var(--glow); animation: glow 2s...`)
-- Multiple overlapping radial glows in accent colors creating a "neon haze"
-
-**Required:** Build palettes from the reference templates (terracotta/sage, teal/cyan, rose/cranberry, slate/blue) or derive from real IDE themes (Dracula, Nord, Solarized, Gruvbox, Catppuccin). Accents should feel intentional, not default.
-
-### Section Headers
-
-**Forbidden:**
-- Emoji icons in section headers (🏗️, ⚙️, 📁, 💻, 📅, 🔗, ⚡, 🔧, 📦, 🚀, etc.)
-- Section headers that all use the same icon-in-rounded-box pattern
-
-**Required:** Use styled monospace labels with colored dot indicators (see `.section-label` in templates), numbered badges (`section__num` pattern), or asymmetric section dividers. If an icon is genuinely needed, use an inline SVG that matches the palette — not emoji.
-
-### Layout & Hierarchy
-
-**Forbidden:**
-- Perfectly centered everything with uniform padding
-- All cards styled identically with the same border-radius, shadow, and spacing
-- Every section getting equal visual treatment — no hero/primary vs. secondary distinction
-- Symmetric layouts where left and right halves mirror each other
-
-**Required:** Vary visual weight. Hero sections should dominate (larger type, more padding, accent-tinted background). Reference sections should feel compact. Use the depth tiers (hero → elevated → default → recessed). Asymmetric layouts create interest.
-
-### Template Patterns
-
-**Forbidden:**
-- Three-dot window chrome (red/yellow/green dots) on code blocks — this is a cliché
-- KPI cards where every metric has identical gradient text treatment
-- "Neon Dashboard" as an aesthetic choice — it always produces generic results
-- Gradient meshes with pink/purple/cyan blobs in the background
-
-**Required:** Code blocks use a simple header with filename or language label. KPI cards vary by importance — hero numbers for the primary metric, subdued treatment for supporting metrics. Pick aesthetics with natural constraints: Blueprint (must feel technical/precise), Editorial (must have generous whitespace and serif typography), Paper/ink (must feel warm and informal).
-
-### The Slop Test
-
-Before delivering, apply this test: **Would a developer looking at this page immediately think "AI generated this"?** The telltale signs:
-
-1. Inter or Roboto font with purple/violet gradient accents
-2. Every heading has `background-clip: text` gradient
-3. Emoji icons leading every section
-4. Glowing cards with animated shadows
+1. Inter/Roboto font with purple/violet gradient accents
+2. `background-clip: text` gradient on headings
+3. Emoji icons leading every section (use monospace labels or SVG instead)
+4. Glowing/pulsing animated box-shadows on cards
 5. Cyan-magenta-pink color scheme on dark background
-6. Perfectly uniform card grid with no visual hierarchy
-7. Three-dot code block chrome
+6. Perfectly uniform card grid — no visual hierarchy, all cards identical
+7. Three-dot window chrome (red/yellow/green dots) on code blocks
 
-If two or more of these are present, the page is slop. Regenerate with a different aesthetic direction — Editorial, Blueprint, Paper/ink, or a specific IDE theme. These constrained aesthetics are harder to mess up because they have specific visual requirements that prevent defaulting to generic patterns.
+All specific forbidden fonts, colors, animations, and layout patterns are defined in the Style section above. When in doubt, reach for a constrained aesthetic (Blueprint, Editorial, Paper/ink) — they're harder to mess up.

@@ -3,8 +3,8 @@
   "description": "Generate beautiful HTML pages for diagrams, diff reviews, plan reviews, and data tables",
   "version": "0.5.0",
   "author": {
-    "name": "nicobailon"
+    "name": "Emerging-Tech-Visma"
   },
-  "repository": "https://github.com/nicobailon/visual-explainer",
+  "repository": "https://github.com/Emerging-Tech-Visma/visual-explainer",
   "license": "MIT"
 }

@@ -30,19 +30,19 @@ This skill fixes that. Real typography, dark/light themes, interactive Mermaid d
 
 **Pi:**
 ```bash
-pi install https://github.com/nicobailon/visual-explainer
+pi install https://github.com/Emerging-Tech-Visma/visual-explainer
 ```
 
 **Claude Code (plugin):**
 ```bash
-claude /plugin install https://github.com/nicobailon/visual-explainer
+claude /plugin install https://github.com/Emerging-Tech-Visma/visual-explainer
 ```
 
 Note: Claude Code plugins namespace commands as `/visual-explainer:command-name`.
 
 **OpenAI Codex:**
 ```bash
-git clone https://github.com/nicobailon/visual-explainer.git ~/.agents/skills/visual-explainer
+git clone https://github.com/Emerging-Tech-Visma/visual-explainer.git ~/.agents/skills/visual-explainer
 mkdir -p ~/.agents/commands
 cp ~/.agents/skills/visual-explainer/commands/*.md ~/.agents/commands/
 ```
@@ -58,7 +58,7 @@ cp ~/.agents/skills/visual-explainer/commands/*.md ~/.agents/commands/
 | `/plan-review` | Compare a plan against the codebase with risk assessment |
 | `/project-recap` | Mental model snapshot for context-switching back to a project |
 | `/fact-check` | Verify accuracy of a document against actual code |
-| `/share` | Deploy an HTML page to Vercel and get a live URL |
+| `/share` | Share an HTML page via GCP Firebase CLI |
 
 The agent also kicks in automatically when it's about to dump a complex table in the terminal (4+ rows or 3+ columns) — it renders HTML instead.
 
@@ -94,6 +94,20 @@ templates/            ← reference templates with different palettes
 
 The skill routes to the right approach automatically: Mermaid for flowcharts and diagrams, CSS Grid for architecture overviews, HTML tables for data, Chart.js for dashboards.
 
+## Companion: playwright-cli
+
+For browser automation workflows (testing generated pages, scraping data to visualize, form filling), install [playwright-cli](https://github.com/microsoft/playwright-cli) as a user-level Claude skill:
+
+```bash
+# Install playwright-cli globally
+npm install -g playwright-cli
+
+# Add the skill to your Claude user-level skills
+# Copy the skill folder to ~/.claude/skills/playwright-cli/
+```
+
+The visual-explainer skill generates HTML pages; playwright-cli lets your agent interact with them and other web pages programmatically.
+
 ## Limitations
 
 - Requires a browser to view
@@ -102,7 +116,7 @@ The skill routes to the right approach automatically: Mermaid for flowcharts and
 
 ## Credits
 
-Borrows ideas from [Anthropic's frontend-design skill](https://github.com/anthropics/skills) and [interface-design](https://github.com/Dammyjay93/interface-design).
+Forked from [nicobailon/visual-explainer](https://github.com/nicobailon/visual-explainer). Borrows ideas from [Anthropic's frontend-design skill](https://github.com/anthropics/skills) and [interface-design](https://github.com/Dammyjay93/interface-design).
 
 ## License
 

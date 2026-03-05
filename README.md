@@ -16,8 +16,6 @@ Ask your agent to explain a system architecture, review a diff, or compare requi
 > /plan-review ~/docs/refactor-plan.md
 ```
 
-https://github.com/user-attachments/assets/55ebc81b-8732-40f6-a4b1-7c3781aa96ec
-
 ## Why
 
 Every coding agent defaults to ASCII art when you ask for a diagram. Box-drawing characters, monospace alignment hacks, text arrows. It works for trivial cases, but anything beyond a 3-box flowchart turns into an unreadable mess.
@@ -70,8 +68,6 @@ Any command that produces a scrollable page supports `--slides` to generate a sl
 /diff-review --slides
 /project-recap --slides 2w
 ```
-
-https://github.com/user-attachments/assets/342d3558-5fcf-4fb2-bc03-f0dd5b9e35dc
 
 ## How It Works
 

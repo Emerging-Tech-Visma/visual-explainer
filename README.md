@@ -26,9 +26,19 @@ This skill fixes that. Real typography, dark/light themes, interactive Mermaid d
 
 ## Install
 
-```bash
-claude /install https://github.com/Emerging-Tech-Visma/visual-explainer
+Open Claude Code and run:
+
 ```
+/plugin marketplace add Emerging-Tech-Visma/visual-explainer
+```
+
+Then install the plugin:
+
+```
+/plugin install visual-explainer
+```
+
+> If SSH fails, use the HTTPS workaround: `/plugin` -> Marketplaces -> Add -> paste `Emerging-Tech-Visma/visual-explainer`
 
 Commands are namespaced as `/visual-explainer:command-name`.
 

@@ -3,19 +3,22 @@
 # Usage: bash scripts/gemini-image.sh --prompt "..." --output /tmp/img.png [--aspect-ratio 16:9]
 set -euo pipefail
 
-# Load .env if present (look in script dir's parent, or cwd)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for envfile in "$SCRIPT_DIR/../.env" "./.env"; do
-  if [[ -f "$envfile" ]]; then
-    while IFS='=' read -r key value; do
-      case "$key" in
-        Gemini_API_Key|GEMINI_API_KEY) export GEMINI_API_KEY="${value}" ;;
-        Gemini_Model|GEMINI_MODEL) export GEMINI_MODEL="${value}" ;;
-      esac
-    done < "$envfile"
-    break
-  fi
-done
+# Load .env if GEMINI_API_KEY not already in environment
+# Search order: shell env (already set) > project .env > home ~/.env
+if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  for envfile in "$SCRIPT_DIR/../.env" "./.env" "$HOME/.env"; do
+    if [[ -f "$envfile" ]]; then
+      while IFS='=' read -r key value; do
+        case "$key" in
+          Gemini_API_Key|GEMINI_API_KEY) export GEMINI_API_KEY="${value}" ;;
+          Gemini_Model|GEMINI_MODEL) export GEMINI_MODEL="${value}" ;;
+        esac
+      done < "$envfile"
+      break
+    fi
+  done
+fi
 
 PROMPT=""
 OUTPUT=""
@@ -37,7 +40,10 @@ if [[ -z "$OUTPUT" ]]; then
   echo "Error: --output is required" >&2; exit 1
 fi
 if [[ -z "${GEMINI_API_KEY:-}" ]]; then
-  echo "Error: GEMINI_API_KEY environment variable is not set" >&2; exit 1
+  echo "Error: GEMINI_API_KEY not found. Set it via:" >&2
+  echo "  export GEMINI_API_KEY=your_key  (in ~/.zshrc or ~/.bashrc)" >&2
+  echo "  or add GEMINI_API_KEY=your_key to ~/.env" >&2
+  exit 1
 fi
 
 # Validate aspect ratio if provided

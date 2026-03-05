@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires a browser to view generated HTML files. Optional surf-cli or GEMINI_API_KEY for AI image generation.
 metadata:
   author: Emerging-Tech-Visma
-  version: "0.9.0"
+  version: "0.10.0"
 ---
 
 # Visual Explainer

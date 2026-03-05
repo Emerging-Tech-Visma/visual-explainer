@@ -11,7 +11,7 @@
       "name": "visual-explainer",
       "source": "./",
       "description": "Generate beautiful HTML pages for diagrams, diff reviews, plan reviews, and data tables",
-      "version": "0.9.0"
+      "version": "0.10.0"
     }
   ]
 }

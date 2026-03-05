@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.0] - 2026-03-05
+
+### Orchestrator Command
+- `/visualize` smart entry point — analyzes intent, asks adaptive questions, routes to the right VE command(s)
+- Prioritized signal extraction with disambiguation (git refs, time windows, keywords)
+- Chaining support: "review my diff and then make slides" runs multiple commands in sequence
+- Palette defaults per command type (Tidal for reviews, Ember for plans, Aurora for architecture)
+
+### Portable Paths
+- All `./` relative paths replaced with `${CLAUDE_SKILL_DIR}/` for correct resolution when installed as a plugin
+- Plugin works from any directory via `--plugin-dir` or marketplace install
+
+### Plugin Marketplace
+- Added `marketplace.json` for `/plugin marketplace add` installation
+- Verified plugin structure: commands, references, templates, scripts all load correctly
+
 ## [0.9.0] - 2026-03-05
 
 ### HTML Quality Rules

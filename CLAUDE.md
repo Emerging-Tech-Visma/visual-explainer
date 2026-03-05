@@ -1,6 +1,6 @@
 # visual-explainer
 
-Claude Code plugin that generates styled HTML pages for diagrams, reviews, and visual explanations. v0.9.0.
+Claude Code plugin that generates styled HTML pages for diagrams, reviews, and visual explanations. v0.10.0.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ scripts/              ← gemini-image.sh (AI image generation)
 
 ## Key Rules
 
-- Version lives in `package.json`, `SKILL.md` metadata, and `.claude-plugin/plugin.json` — keep all three in sync
+- Version lives in `package.json`, `SKILL.md` metadata, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json` — keep all four in sync
 - `GEMINI_API_KEY` comes from user's `~/.zshrc`, not `.env` in repo
 - `.env` is gitignored — never commit API keys
 - See `.claude/rules/` for detailed guidelines

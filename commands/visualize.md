@@ -57,10 +57,10 @@ Ask these in order. Stop as soon as you have enough to route:
 
 Once you know the target, read the target command file and follow its full instructions with the gathered context.
 
-**How to delegate:** Read `./commands/<command-name>.md` (e.g., `./commands/diff-review.md`) and execute those instructions. Pass all gathered context — topic, audience, preferences, source files, palette suggestion — as if the user had invoked that command directly with that information.
+**How to delegate:** Read `${CLAUDE_SKILL_DIR}/commands/<command-name>.md` (e.g., `${CLAUDE_SKILL_DIR}/commands/diff-review.md`) and execute those instructions. Pass all gathered context — topic, audience, preferences, source files, palette suggestion — as if the user had invoked that command directly with that information.
 
 Example internal reasoning:
-> Read `./commands/generate-slides.md` and follow its instructions. Context: The user wants to present the auth system architecture to their team. Use the Ember palette. Include AI-generated hero images. Source files: `src/auth/`.
+> Read `${CLAUDE_SKILL_DIR}/commands/generate-slides.md` and follow its instructions. Context: The user wants to present the auth system architecture to their team. Use the Ember palette. Include AI-generated hero images. Source files: `src/auth/`.
 
 **Palette defaults** (use unless the user expressed a preference):
 
@@ -97,18 +97,18 @@ State the chain to the user: "I'll first do a diff review, then create slides fr
 
 `/visualize main`:
 > "I'll generate a visual diff review of your changes against main."
-> Read `./commands/diff-review.md` and follow with arg `main`.
+> Read `${CLAUDE_SKILL_DIR}/commands/diff-review.md` and follow with arg `main`.
 
 `/visualize 3m`:
 > "I'll recap the last 3 months of project activity."
-> Read `./commands/project-recap.md` and follow with arg `3m`.
+> Read `${CLAUDE_SKILL_DIR}/commands/project-recap.md` and follow with arg `3m`.
 
 `/visualize --slides how our auth system works`:
-> Read `./commands/generate-slides.md` and follow with the topic.
+> Read `${CLAUDE_SKILL_DIR}/commands/generate-slides.md` and follow with the topic.
 
 `/visualize plans/feature-x.md`:
 > "I'll review this plan against the current codebase."
-> Read `./commands/plan-review.md` and follow with the file path.
+> Read `${CLAUDE_SKILL_DIR}/commands/plan-review.md` and follow with the file path.
 
 `/visualize the auth service architecture`:
 > "Diagram of the current architecture, or a plan for implementing changes?"
@@ -116,16 +116,16 @@ State the chain to the user: "I'll first do a diff review, then create slides fr
 
 `/visualize implement user permissions`:
 > "I'll create a visual implementation plan for user permissions."
-> Read `./commands/generate-visual-plan.md` and follow.
+> Read `${CLAUDE_SKILL_DIR}/commands/generate-visual-plan.md` and follow.
 
 `/visualize verify my last review`:
-> Read `./commands/fact-check.md` and follow.
+> Read `${CLAUDE_SKILL_DIR}/commands/fact-check.md` and follow.
 
 `/visualize share`:
-> Read `./commands/share.md` and follow.
+> Read `${CLAUDE_SKILL_DIR}/commands/share.md` and follow.
 
 `/visualize review my PR and then make a deck from it`:
 > "I'll first do a diff review, then create slides from the findings."
-> Read `./commands/diff-review.md`, then `./commands/generate-slides.md` using the review output.
+> Read `${CLAUDE_SKILL_DIR}/commands/diff-review.md`, then `${CLAUDE_SKILL_DIR}/commands/generate-slides.md` using the review output.
 
 $@

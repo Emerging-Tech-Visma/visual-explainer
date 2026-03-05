@@ -1134,7 +1134,7 @@ which surf && surf gemini "descriptive prompt matching deck palette" --generate-
 
 # Tier 2: direct Gemini API
 # (if surf unavailable but $GEMINI_API_KEY is set)
-bash ./scripts/gemini-image.sh --prompt "descriptive prompt matching deck palette" --output /tmp/ve-slide-title.png --aspect-ratio 16:9
+bash ${CLAUDE_SKILL_DIR}/scripts/gemini-image.sh --prompt "descriptive prompt matching deck palette" --output /tmp/ve-slide-title.png --aspect-ratio 16:9
 
 # Base64 encode for self-containment (macOS)
 TITLE_IMG=$(base64 -i /tmp/ve-slide-title.png)
